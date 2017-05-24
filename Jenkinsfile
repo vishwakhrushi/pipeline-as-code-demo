@@ -1,7 +1,7 @@
 #!groovy
 
 stage 'Dev'
-node ('docker-cloud') {
+node ('master') {
     checkout scm
     mvn 'clean package'
     dir('target') {stash name: 'war', includes: 'x.war'}
@@ -15,7 +15,7 @@ parallel(longerTests: {
 })
 
 stage name: 'Staging', concurrency: 1
-node ('docker-cloud') {
+node ('master') {
     deploy 'staging'
 }
 
@@ -27,7 +27,7 @@ try {
 }
 
 stage name: 'Production', concurrency: 1
-node ('docker-cloud'){
+node ('master'){
     echo 'Production server looks to be alive'
     deploy 'production'
     echo "Deployed to production"
